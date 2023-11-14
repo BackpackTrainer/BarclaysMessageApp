@@ -29,4 +29,11 @@ public class MessageControllerBasicUnitTests {
         uut.getAllMessages();
         verify(messageService, times(1)).findAll();
     }
+
+    @Test
+    public void testGetMessageById()  {
+        Long id =1L;
+        uut.getMessageById(id);
+        verify(messageService, times(1)).getMessageById(id);
+    }
 }

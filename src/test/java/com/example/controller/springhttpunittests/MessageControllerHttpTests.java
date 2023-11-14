@@ -63,14 +63,23 @@ public class MessageControllerHttpTests {
         assertEquals(3, actualMessages.length);
     }
 
-//    private Iterable<Message> createMessageList()  {
-//        ArrayList<Message> messages = new ArrayList<>();
-//        Message message1 = new Message("First message");
-//        Message message2 = new Message("Second message");
-//        Message message3 = new Message("Third message");
-//        messages.add(message1);
-//        messages.add(message3);
-//        messages.add(message2);
-//        return messages;
-//    }
+    @Test
+    public void testGetMessageByIdFromHttpRequest() throws Exception {
+        Long id = 1L;
+        Message testMessage = new Message("test message");
+        when(messageService.getMessageById(id)).thenReturn(testMessage);
+
+        ResultActions resultActions = this.mockMvc.perform(
+                        MockMvcRequestBuilders.get("/messages" + id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept("application/json"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        MvcResult result = resultActions.andReturn();
+        String contentAsString = result.getResponse().getContentAsString();
+
+        Message actualMessage = mapper.readValue(contentAsString, Message.class);
+
+        verify(messageService, times(1)).getMessageById(id);
+    }
 }

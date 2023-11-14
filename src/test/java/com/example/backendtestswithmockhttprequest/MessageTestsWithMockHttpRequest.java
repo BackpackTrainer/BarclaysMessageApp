@@ -3,6 +3,8 @@ package com.example.backendtestswithmockhttprequest;
 import com.example.entity.Message;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -54,5 +56,23 @@ public class MessageTestsWithMockHttpRequest {
                 () -> assertEquals("Third test message", messages[2].getContent()),
                 () -> assertEquals("Fourth test message", messages[3].getContent())
         );
+    }
+
+    @ParameterizedTest
+    @CsvSource({"1000, First test message", "2000, Second test message", "3000, Third test message"})
+    public void testGettingMessagesById(Long id, String content) throws Exception {
+
+        ResultActions resultActions = this.mockMvc.perform(
+                        MockMvcRequestBuilders.get("/messages/" + id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept("application/json"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        MvcResult result = resultActions.andReturn();
+        String contentAsString = result.getResponse().getContentAsString();
+
+        Message message = mapper.readValue(contentAsString, Message.class);
+
+        assertEquals(content, message.getContent());
     }
 }

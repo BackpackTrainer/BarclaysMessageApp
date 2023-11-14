@@ -7,4 +7,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface MessageService {
     public Iterable<Message> findAll();
+
+    public Message getMessageById(Long id);
 }

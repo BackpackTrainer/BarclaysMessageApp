@@ -21,6 +21,14 @@ public class MessageServiceSpringIntegrationTests {
     @MockBean
     MessageRepository messageRepository;
 
+   @Test
+   public void testFindMessageById()  {
+       Long messageId = 1L;
+       uut.getMessageById(messageId);
+
+       verify(messageRepository, times(1)).findById(messageId);
+   }
+
     @Test
     public void testGetAllMessages()  {
         uut.findAll();

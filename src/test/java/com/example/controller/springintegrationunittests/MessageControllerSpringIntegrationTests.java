@@ -24,4 +24,11 @@ public class MessageControllerSpringIntegrationTests {
         uut.getAllMessages();
         verify(messageService, times(1)).findAll();
     }
+
+    @Test
+    public void testGetMessageById()  {
+        Long messageId = 1L;
+        uut.getMessageById(messageId);
+        verify(messageService, times(1)).getMessageById(messageId);
+    }
 }
