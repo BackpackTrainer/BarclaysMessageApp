@@ -37,6 +37,8 @@ public class BackEndTestWithRealHTTPRequest {
         );
     }
 
+    @ParameterizedTest
+    @CsvSource({"150, First random message", "250, Second random message", "350, Third random message"})
     public void testGettingMessagesById(Long id, String content) throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:8080/messages/" + id);
 
@@ -47,16 +49,16 @@ public class BackEndTestWithRealHTTPRequest {
         assertEquals(content, message.getContent());
     }
 
-@Test
-public void testGettingMessagesBySenderEmail() throws Exception {
-    String senderEmail = "fred@gmail.com";
-    int expectedLength = 2;
-    HttpUriRequest request = new HttpGet("http://localhost:8080/messages/bySenderEmail/" + senderEmail);
+    @ParameterizedTest
+    @CsvSource({"fred@gmail.com, 2", "ethel@gmail.com, 2", "lucy@gmail.com, 0", "ricky@gmail.com, 0"})
+    public void testGettingMessagesBySenderEmail(String senderEmail, int expectedLength) throws Exception {
 
-    HttpResponse response = (HttpResponse)HttpClientBuilder.create().build().execute(request);
+        HttpUriRequest request = new HttpGet("http://localhost:8080/messages/bySenderEmail/" + senderEmail);
 
-    Message[] messages = mapper.readValue(response.getEntity().getContent(), Message[].class);
+        HttpResponse response = (HttpResponse)HttpClientBuilder.create().build().execute(request);
 
-    assertEquals(expectedLength, messages.length);
-}
+        Message[] messages = mapper.readValue(response.getEntity().getContent(), Message[].class);
+
+        assertEquals(expectedLength, messages.length);
+    }
 }
