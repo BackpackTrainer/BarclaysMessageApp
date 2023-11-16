@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MessageRepository extends CrudRepository<Message, Long> {
-    //Iterable<Message> findAll();
+
+    public Iterable<Message> findBySenderId(Long id);
+
+    public Iterable<Message> findMessagesBySenderEmail(String senderEmail);
 
 }

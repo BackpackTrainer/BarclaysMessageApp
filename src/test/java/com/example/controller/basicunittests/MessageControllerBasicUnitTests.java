@@ -1,6 +1,7 @@
 package com.example.controller.basicunittests;
 
 import com.example.controllers.MessageController;
+import com.example.entity.Message;
 import com.example.services.MessageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,4 +37,13 @@ public class MessageControllerBasicUnitTests {
         uut.getMessageById(id);
         verify(messageService, times(1)).getMessageById(id);
     }
+    @Test
+    public void testGetMessageBySenderEmail()  {
+        String senderEmail = "me@here.com";
+
+        uut.getMessagesBySenderEmail(senderEmail);
+        verify(messageService, times(1)).findMessagesBySenderEmail(senderEmail);
+    }
+
+
 }

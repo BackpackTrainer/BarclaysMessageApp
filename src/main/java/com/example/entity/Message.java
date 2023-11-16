@@ -1,11 +1,14 @@
 package com.example.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Message {
 
     @Id
@@ -13,6 +16,14 @@ public class Message {
     Long id;
 
     String content;
+
+    @ManyToOne
+    private Person sender;
+
+    public Message(String content, Person sender) {
+        this.content = content;
+        this.sender = sender;
+    }
 
     public Message(String content) {
         this.content = content;
@@ -26,5 +37,13 @@ public class Message {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Person getSender() {
+        return sender;
+    }
+
+    public void setSender(Person sender) {
+        this.sender = sender;
     }
 }

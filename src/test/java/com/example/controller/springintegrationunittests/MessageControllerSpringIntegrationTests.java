@@ -31,4 +31,12 @@ public class MessageControllerSpringIntegrationTests {
         uut.getMessageById(messageId);
         verify(messageService, times(1)).getMessageById(messageId);
     }
+
+    @Test
+    public void testGetMessageBySenderEmail() {
+        String senderEmail = "me@here.com";
+
+        uut.getMessagesBySenderEmail(senderEmail);
+        verify(messageService, times(1)).findMessagesBySenderEmail(senderEmail);
+    }
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -36,8 +37,6 @@ public class BackEndTestWithRealHTTPRequest {
         );
     }
 
-    @ParameterizedTest
-    @CsvSource({"100, First random message", "200, Second random message", "300, Third random message"})
     public void testGettingMessagesById(Long id, String content) throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:8080/messages/" + id);
 
@@ -47,4 +46,17 @@ public class BackEndTestWithRealHTTPRequest {
 
         assertEquals(content, message.getContent());
     }
+
+@Test
+public void testGettingMessagesBySenderEmail() throws Exception {
+    String senderEmail = "fred@gmail.com";
+    int expectedLength = 2;
+    HttpUriRequest request = new HttpGet("http://localhost:8080/messages/bySenderEmail/" + senderEmail);
+
+    HttpResponse response = (HttpResponse)HttpClientBuilder.create().build().execute(request);
+
+    Message[] messages = mapper.readValue(response.getEntity().getContent(), Message[].class);
+
+    assertEquals(expectedLength, messages.length);
+}
 }

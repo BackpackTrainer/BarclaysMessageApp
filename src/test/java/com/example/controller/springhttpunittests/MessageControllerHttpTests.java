@@ -17,7 +17,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @WebMvcTest(MessageController.class)
@@ -70,7 +72,7 @@ public class MessageControllerHttpTests {
         when(messageService.getMessageById(id)).thenReturn(testMessage);
 
         ResultActions resultActions = this.mockMvc.perform(
-                        MockMvcRequestBuilders.get("/messages" + id)
+                        MockMvcRequestBuilders.get("/messages/" + id)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept("application/json"))
                 .andExpect(MockMvcResultMatchers.status().isOk());
@@ -81,5 +83,33 @@ public class MessageControllerHttpTests {
         Message actualMessage = mapper.readValue(contentAsString, Message.class);
 
         verify(messageService, times(1)).getMessageById(id);
+    }
+
+    @Test
+    public void testGetMessagesBySenderEmailFromHttpRequest() throws Exception {
+        String senderEmail = "fred@gmail.com";
+        ArrayList<Message> senderMessages = new ArrayList<>();
+        Message testMessage = new Message("test message");
+        Message testMessage2 = new Message("another test message");
+        senderMessages.add(testMessage2);
+        senderMessages.add(testMessage);
+        when(messageService.findMessagesBySenderEmail(senderEmail)).thenReturn(senderMessages);
+
+        ResultActions resultActions = this.mockMvc.perform(
+                MockMvcRequestBuilders.get("/messages/bySenderEmail/" + senderEmail)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept("application/json"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        MvcResult result = resultActions.andReturn();
+        String contentAsString = result.getResponse().getContentAsString();
+
+        Message[] actualMessages = mapper.readValue(contentAsString, Message[].class);
+
+        verify(messageService, times(1)).findMessagesBySenderEmail(senderEmail);
+        assertAll("testing the message contents",
+                () -> assertTrue(testMessage.getContent().equals(actualMessages[1].getContent())),
+                () -> assertTrue(testMessage2.getContent().equals(actualMessages[0].getContent()))
+        );
     }
 }

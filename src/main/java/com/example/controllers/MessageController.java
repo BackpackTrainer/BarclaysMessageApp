@@ -22,6 +22,11 @@ public class MessageController {
         return messageService.findAll();
     }
 
+    @GetMapping("/messages/bySenderEmail/{senderEmail}")
+    public Iterable<Message> getMessagesBySenderEmail(@PathVariable String senderEmail) {
+        return messageService.findMessagesBySenderEmail(senderEmail);
+    }
+
     @Autowired
     public void setMessageService(MessageService messageService) {
         this.messageService = messageService;

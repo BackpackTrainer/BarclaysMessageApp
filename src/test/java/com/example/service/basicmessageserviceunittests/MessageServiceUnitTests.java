@@ -46,4 +46,17 @@ private MessageRepository messageRepository;
 
     assertEquals(expectedLength, actualLength);
     }
+
+    @Test
+    public void testReturnFromFindMessagesBySenderEmail()  {
+        String senderEmail = "fred@gmail.com";
+        when(messageRepository.findMessagesBySenderEmail(senderEmail)).thenReturn(TestUtility.createMessageList());
+        int expectedLength = 3;
+
+        Iterable<Message> actualReturn = uut.findMessagesBySenderEmail(senderEmail);
+
+        int actualLength = TestUtility.getIterableSize(actualReturn);
+
+        assertEquals(expectedLength, actualLength);
+    }
 }

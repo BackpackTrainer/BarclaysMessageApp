@@ -75,4 +75,23 @@ public class MessageTestsWithMockHttpRequest {
 
         assertEquals(content, message.getContent());
     }
+
+    @Test
+    public void testGettingMessagesBySenderEmail() throws Exception {
+        int expectedLength = 2;
+        String senderEmail = "fred@gmail.com";
+
+        ResultActions resultActions =this.mockMvc.perform(
+                        MockMvcRequestBuilders.get("/messages/bySenderEmail/" + senderEmail)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept("application/json"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        MvcResult result = resultActions.andReturn();
+        String contentAsString = result.getResponse().getContentAsString();
+
+        Message[] messages = mapper.readValue(contentAsString, Message[].class);
+
+        assertEquals(expectedLength, messages.length);
+    }
 }
