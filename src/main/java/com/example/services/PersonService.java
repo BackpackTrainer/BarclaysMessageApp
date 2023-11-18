@@ -6,4 +6,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface PersonService {
     public Person addPerson(Person p);
+
+    Iterable<Person> findAllPersons();
 }

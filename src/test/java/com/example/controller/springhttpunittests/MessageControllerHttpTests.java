@@ -3,6 +3,7 @@ package com.example.controller.springhttpunittests;
 import com.example.TestUtility;
 import com.example.controllers.MessageController;
 import com.example.entity.Message;
+import com.example.entity.Person;
 import com.example.services.MessageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -111,5 +112,26 @@ public class MessageControllerHttpTests {
                 () -> assertTrue(testMessage.getContent().equals(actualMessages[1].getContent())),
                 () -> assertTrue(testMessage2.getContent().equals(actualMessages[0].getContent()))
         );
+    }
+
+    @Test
+    public void testAddingAMessage() throws Exception {
+        String name = "Dave";
+        String email = "dave@gmail.com";
+        Person testPerson = new Person(name, email);
+
+        String content = "So long and Thanks for all the fish!";
+
+        Message testMessage = new Message(content, testPerson);
+
+        String json = mapper.writeValueAsString(testMessage);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/addMessage")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+        verify(messageService, times(1)).addMessage(any(Message.class));
     }
 }

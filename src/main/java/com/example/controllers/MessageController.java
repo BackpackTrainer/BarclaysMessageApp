@@ -4,9 +4,7 @@ import com.example.entity.Message;
 import com.example.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class MessageController {
@@ -25,6 +23,11 @@ public class MessageController {
     @GetMapping("/messages/bySenderEmail/{senderEmail}")
     public Iterable<Message> getMessagesBySenderEmail(@PathVariable String senderEmail) {
         return messageService.findMessagesBySenderEmail(senderEmail);
+    }
+
+    @PostMapping("/addMessage")
+    public Message addMessage(@RequestBody Message message) {
+        return messageService.addMessage(message);
     }
 
     @Autowired

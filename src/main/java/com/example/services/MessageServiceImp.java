@@ -31,6 +31,11 @@ public class MessageServiceImp implements MessageService{
         return messageRepository.findMessagesBySenderEmail(senderEmail);
     }
 
+    @Override
+    public Message addMessage(Message message) {
+        return messageRepository.save(message);
+    }
+
     @Autowired
     public void setMessageRepository(MessageRepository messageRepository) {
         this.messageRepository = messageRepository;

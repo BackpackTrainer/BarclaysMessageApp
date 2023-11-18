@@ -16,6 +16,11 @@ public class PersonServiceImp implements  PersonService{
         return personRepository.save(p);
     }
 
+    @Override
+    public Iterable<Person> findAllPersons() {
+        return personRepository.findAll();
+    }
+
     @Autowired
     public void setPersonRepository(PersonRepository personRepository) {
         this.personRepository = personRepository;

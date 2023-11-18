@@ -10,5 +10,7 @@ public interface MessageService {
 
     public Message getMessageById(Long id);
 
-    Iterable<Message> findMessagesBySenderEmail(String senderEmail);
+    public Iterable<Message> findMessagesBySenderEmail(String senderEmail);
+
+    public Message addMessage(Message message);
 }

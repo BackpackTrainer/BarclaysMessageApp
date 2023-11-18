@@ -1,10 +1,14 @@
 package com.example.backendtestswithmockhttprequest;
 
 import com.example.entity.Message;
+import com.example.entity.Person;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,9 +22,10 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 @Sql("classpath:test-data.sql")
 @SpringBootTest
@@ -29,42 +34,41 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestPropertySource(properties = {
         "spring.sql.init.mode=never"
 })
-public class MessageTestsWithMockHttpRequest {
+public class PersonTestsWithMockHttpRequest {
 
     @Autowired
     MockMvc mockMvc;
     ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void testGettingAllMessages() throws Exception {
-        int expectedLength = 4;
+    public void testAddingAPerson() throws Exception {
+        int originalNumberOfPersons = getNumberOfPersons();
+        String name = "Dave";
+        String email = "dave@gmail.com";
+        Person testPerson = new Person(name, email);
 
-        ResultActions resultActions =this.mockMvc.perform(
-                        MockMvcRequestBuilders.get("/messages")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept("application/json"))
+        String json = mapper.writeValueAsString(testPerson);
+
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/addPerson")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         MvcResult result = resultActions.andReturn();
         String contentAsString = result.getResponse().getContentAsString();
 
-        Message[] messages = mapper.readValue(contentAsString, Message[].class);
+        Person person = mapper.readValue(contentAsString, Person.class);
 
-        assertAll("Testing from a test-data.sql file",
-                () -> assertEquals(expectedLength, messages.length),
-                () -> assertEquals("First test message", messages[0].getContent()),
-                () -> assertEquals("Second test message", messages[1].getContent()),
-                () -> assertEquals("Third test message", messages[2].getContent()),
-                () -> assertEquals("Fourth test message", messages[3].getContent())
+        assertAll("testing add a Person",
+            () -> assertEquals(originalNumberOfPersons+1, getNumberOfPersons()),
+            () -> assertTrue(checkIfOnList(name, email))
         );
     }
 
-    @ParameterizedTest
-    @CsvSource({"1000, First test message", "2000, Second test message", "3000, Third test message"})
-    public void testGettingMessagesById(Long id, String content) throws Exception {
-
-        ResultActions resultActions = this.mockMvc.perform(
-                        MockMvcRequestBuilders.get("/messages/" + id)
+    private int getNumberOfPersons() throws Exception {
+        ResultActions resultActions =this.mockMvc.perform(
+                        MockMvcRequestBuilders.get("/persons")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept("application/json"))
                 .andExpect(MockMvcResultMatchers.status().isOk());
@@ -72,18 +76,14 @@ public class MessageTestsWithMockHttpRequest {
         MvcResult result = resultActions.andReturn();
         String contentAsString = result.getResponse().getContentAsString();
 
-        Message message = mapper.readValue(contentAsString, Message.class);
-
-        assertEquals(content, message.getContent());
+        Person[] persons = mapper.readValue(contentAsString, Person[].class);
+        return persons.length;
     }
 
-    @Test
-    public void testGettingMessagesBySenderEmail() throws Exception {
-        int expectedLength = 2;
-        String senderEmail = "fred@gmail.com";
-
+    private boolean checkIfOnList(String name, String email) throws Exception {
+        boolean isOnList = false;
         ResultActions resultActions =this.mockMvc.perform(
-                        MockMvcRequestBuilders.get("/messages/bySenderEmail/" + senderEmail)
+                        MockMvcRequestBuilders.get("/persons")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept("application/json"))
                 .andExpect(MockMvcResultMatchers.status().isOk());
@@ -91,8 +91,12 @@ public class MessageTestsWithMockHttpRequest {
         MvcResult result = resultActions.andReturn();
         String contentAsString = result.getResponse().getContentAsString();
 
-        Message[] messages = mapper.readValue(contentAsString, Message[].class);
+        Person[] persons = mapper.readValue(contentAsString, Person[].class);
 
-        assertEquals(expectedLength, messages.length);
+        for(Person p : persons) {
+            if (p.getName().equals(name) && p.getEmail().equals(email)) {
+                isOnList = true;
+            }
+        }return isOnList;
     }
 }
