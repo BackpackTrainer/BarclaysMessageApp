@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -16,7 +15,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BackEndTestWithRealHTTPRequest {
+public class MessageTestWithRealHTTPRequest {
     ObjectMapper mapper = new ObjectMapper();
 
     @Test
@@ -61,4 +60,5 @@ public class BackEndTestWithRealHTTPRequest {
 
         assertEquals(expectedLength, messages.length);
     }
+
 }
