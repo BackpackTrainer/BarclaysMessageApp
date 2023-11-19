@@ -19,7 +19,7 @@ public class Message {
     String content;
 
     @ManyToOne
-    @JsonBackReference
+    //@JsonBackReference
     private Person sender;
 
     public Message(String content, Person sender) {

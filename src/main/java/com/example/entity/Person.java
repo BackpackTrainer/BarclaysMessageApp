@@ -18,7 +18,7 @@ public class Person {
     private String name;
     private String email;
     @OneToMany(mappedBy =  "sender")
-    @JsonManagedReference
+    //@JsonManagedReference
     private List<Message> sentMessages;
 
     public Person()  {}
@@ -36,7 +36,7 @@ public class Person {
         return email;
     }
 
-    public List<Message> getSentMessages() {
-        return sentMessages;
-    }
+//    public List<Message> getSentMessages() {
+//        return sentMessages;
+//    }
 }
