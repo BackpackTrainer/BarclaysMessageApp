@@ -15,6 +15,15 @@ public class Person {
     @GeneratedValue
     private Long id;
     private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
     private String email;
     @OneToMany(mappedBy =  "sender")
     private List<Message> sentMessages;

@@ -14,9 +14,7 @@ public class Message {
     @Id
     @GeneratedValue
     Long id;
-
     String content;
-
     @ManyToOne
     private Person sender;
 
