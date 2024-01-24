@@ -48,4 +48,8 @@ public class Message {
     public void setSender(Person sender) {
         this.sender = sender;
     }
+
+    public Long getId() {
+        return id;
+    }
 }

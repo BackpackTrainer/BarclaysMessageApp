@@ -36,7 +36,10 @@ public class Person {
         return email;
     }
 
-//    public List<Message> getSentMessages() {
+    public Long getId() {
+        return id;
+    }
+    //    public List<Message> getSentMessages() {
 //        return sentMessages;
 //    }
 }
